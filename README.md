@@ -10,4 +10,4 @@ https://cdn.discordapp.com/attachments/349982179864084491/719497018401357884/unk
 
 Tool to download your own vods.  Will download them in raw .ts format. VLC maybe able to play these, use a videoconverter of choice to convert to other formats like .mp4.  Will download 30 at a time (more if you want to recompile for your purposes)
 
-Download compiled for win10 64-bit here: http://danefairbanks.com/downloads/apps/HighlightDownloader0.1.zip
+Download compiled for win10 64-bit here: http://danefairbanks.com/downloads/apps/HighlightDownloader.0.2.zip
