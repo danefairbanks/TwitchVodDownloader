@@ -36,6 +36,8 @@ namespace HighlightDownloader
     {
         static string TwitchClientID = "kimne78kx3ncx6brgo4mv6wki5h1ko";
         static string TwitchToken;
+        static string UserId;
+        static string Login;
         static string RootPath = Environment.CurrentDirectory;
         const int PAGESIZE = 30;
 
@@ -43,6 +45,7 @@ namespace HighlightDownloader
         {
             var options = GetConfig();
             TwitchToken = options.Token;
+            GetUserInfo();
 
             var folder = Path.Combine(RootPath, "downloads");
             if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
@@ -146,6 +149,24 @@ namespace HighlightDownloader
 
             return options;
         }
+        static void GetUserInfo()
+        {
+            try
+            {
+                var http = new HttpClient();
+                http.DefaultRequestHeaders.Add("Client-ID", TwitchClientID);
+                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", TwitchToken);
+
+                var res = http.GetStringAsync($"https://api.twitch.tv/helix/users").GetAwaiter().GetResult();
+                var jtok = JToken.Parse(res);
+                UserId = jtok["data"][0]["id"].ToString();
+                Login = jtok["data"][0]["login"].ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"[{DateTime.Now}] GetUserInfo failed.", ex);
+            }
+        }
 
         static List<VideoInfo> GetVideos(VideoType type, int limit = 30, int offset = 0)
         {
@@ -167,8 +188,8 @@ namespace HighlightDownloader
                     break;
             }
             var url = type == VideoType.All ? 
-                $"https://api.twitch.tv/v5/channels/39658500/video_manager?limit={limit}&offset={offset}&status=recorded%2Crecording"
-                : $"https://api.twitch.tv/v5/channels/39658500/video_manager?broadcast_type={broadcast_type}&limit={limit}&offset={offset}&status=recorded%2Crecording";
+                $"https://api.twitch.tv/v5/channels/{UserId}/video_manager?limit={limit}&offset={offset}&status=recorded%2Crecording"
+                : $"https://api.twitch.tv/v5/channels/{UserId}/video_manager?broadcast_type={broadcast_type}&limit={limit}&offset={offset}&status=recorded%2Crecording";
             var result = http.GetAsync(url).GetAwaiter().GetResult();
             var content = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             var json = JToken.Parse(content);
