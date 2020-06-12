@@ -209,7 +209,7 @@ namespace HighlightDownloader
             var json = JToken.Parse(content);
 
             // Get m3u8 
-            url = $"https://usher.ttvnw.net/vod/{id}.m3u8?sig={json.SelectToken("sig")}&token={json.SelectToken("token")}";
+            url = $"https://usher.ttvnw.net/vod/{id}.m3u8?allow_source=true&sig={json.SelectToken("sig")}&token={json.SelectToken("token")}";
             result = http.GetAsync(url).GetAwaiter().GetResult();
             content = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
